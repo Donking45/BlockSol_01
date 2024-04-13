@@ -4,225 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feedback DApp</title>
-    <!-- Include Web3.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <h1>Feedback DApp</h1>
-    <div id="feedbackList"></div>
-    <form id="feedbackForm">
-        <label for="feedbackInput">Enter Your Feedback:</label><br>
-        <input type="text" id="feedbackInput" name="feedbackInput" required><br>
-        <button type="submit">Submit Feedback</button>
-    </form>
+  <div class="container">
+    <header>
+        <h1>Feedback DApp</h1>
+        <div id="walletStatus"></div>
+        <button id="connectWalletBtn">Connect Wallet</button>
+    </header>
 
-    <script>
-        // Function to connect to Web3 provider (MetaMask)
-        async function connectWallet() {
-            if (window.ethereum) {
-                window.web3 = new Web3(window.ethereum);
-                try {
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    // Accounts now exposed, enable wallet functionality
-                } catch (error) {
-                    console.error('User denied account access:', error);
-                }
-            } else {
-                console.error('No Ethereum provider detected');
-            }
-        }
-
-        // Function to display feedback entries
-        async function displayFeedback() {
-            const contractAddress = '0xe93c5918bdD14112B60513b1776eCE75140B5D4C'; // Replace with your deployed smart contract address
-            const contractAbi = [ [
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "name": "FeedbackAdded",
-      "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "feedbackCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "feedbacks",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_id",
-          "type": "uint256"
-        }
-      ],
-      "name": "getFeedback",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getTotalFeedbacks",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_message",
-          "type": "string"
-        }
-      ],
-      "name": "submitFeedback",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ],]; // Replace with your smart contract ABI
-            const contract = new web3.eth.Contract(contractAbi, contractAddress);
-            const feedbackListElement = document.getElementById('feedbackList');
-            
-            const feedbackCount = await contract.methods.feedbackCount().call();
-            feedbackListElement.innerHTML = '';
-            for (let i = 1; i <= feedbackCount; i++) {
-                const feedback = await contract.methods.feedbacks(i).call();
-                feedbackListElement.innerHTML += `<p>Feedback ID: ${feedback.id}, User: ${feedback.userAddress}, Message: ${feedback.message}</p>`;
-            }
-        }
-
-        // Function to handle form submission and submit feedback
-        async function submitFeedback(event) {
-            event.preventDefault();
-            const feedbackText = document.getElementById('feedbackInput').value;
-            const contractAddress = 'CONTRACT_ADDRESS'; // Replace with your deployed smart contract address
-            const contractAbi = []; // Replace with your smart contract ABI
-            const contract = new web3.eth.Contract(contractAbi, contractAddress);
-
-            try {
-                await contract.methods.submitFeedback(feedbackText).send({ from: web3.eth.defaultAccount });
-                // Feedback submitted successfully, update UI or show success message
-                alert('Feedback submitted successfully');
-                // Refresh feedback list
-                displayFeedback();
-             } catch (error) {
-                console.error('Error submitting feedback:', error);
-                // Show error message to the user
-                alert('Error submitting feedback');
-            }
-        }
-
-        // Main function to initialize the app
-        async function main() {
-            await connectWallet(); // Connect wallet on page load
-            displayFeedback(); // Display existing feedback on page load
-
-            // Add event listener to the feedback form
-            document.getElementById('feedbackForm').addEventListener('submit', submitFeedback);
-         }
-
-        // Call the main function
-        main();
-    </script>
+    <section id="feedbackForm">
+        <h2>Submit Feedback</h2>
+        <form id="feedbackFormSubmissionForm">
+            <label for="feedbackText">Feedback:</label>
+            <textarea id="feedbackText" placeholder="Enter your feedback..." rows="4"></textarea>
+            <button type="submit" id="submitFeedbackBtn">Submit Feedback</button>
+        </form>
+    </section>
+</div>
+    <script src="web3.min.js"></script>
+    <script src="feedback.js"></script>
 </body>
 </html>
+  

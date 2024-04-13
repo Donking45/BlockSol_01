@@ -1,42 +1,28 @@
-# Sample Hardhat Project
+## Project Name
+### FEEDBACK DApp
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+## Brief description of your project.
+This repository contains a simple decentralized feedback system implemented as a smart contract on the Ethereum blockchain. Users can submit feedback and view existing feedback entries directly from their Ethereum wallet-enabled browser.
 
-Try running some of the following tasks:
+## USAGE
+MetaMask or any Ethereum wallet-enabled browser extension installed.
+An Ethereum wallet with access to the Ethereum mainnet or testnet.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
-# Feedback Contract
-This Solidity smart contract Feedback allows users to submit feedback along with their name. It stores the feedback entries and provides functionalities to retrieve feedback and total feedback count.
+## CONNECT WALLET
+Click the "Connect Wallet" button to connect MetaMask or your Ethereum wallet-enabled browser extension. Once connected, your wallet address will be displayed, and you can proceed to submit feedback.
 
- ## Features
-- Submit feedback with a name and message.
-- Retrieve feedback by ID.
-- Get total feedback count.
+## SUBMIT FEEDBACK
+Enter your feedback message in the provided text field.
+Click the "Submit Feedback" button.
+Confirm the transaction in MetaMask.
+Your feedback will be submitted to the smart contract, and the transaction hash will be logged to the console.
 
-## Contract Functions
+## FETCH FEEDBACKS
+Existing feedback entries stored on the smart contract can be fetched and displayed by clicking the "Fetch Feedbacks" button. The total number of feedbacks and each feedback entry will be logged to the console.
 
-### submitFeedback
-Allows users to submit feedback with a name and message. It emits a FeedbackAdded event upon successful submission.
+## SMART CONTRACT DETAILS
+The smart contract ABI and address are provided in index.js for interaction with the Ethereum blockchain. The smart contract includes the following functions:
 
-### getFeedback
-Retrieves feedback details by the specified feedback ID.
-
-### getTotalFeedbacks
-Returns the total count of feedback entries stored in the contract.
-
-Events
-FeedbackAdded
-Emitted when feedback is successfully submitted.
-
--*name:* Name associated with the feedback.
--*userAddress:* Ethereum address of the user who submitted the feedback.
--*message:* Feedback message.
--*timestamp:* Timestamp of when the feedback was submitted.
-
-Users can interact with the contract to submit feedback and retrieve feedback details.
+submitFeedback(string _message): Allows users to submit feedback messages to the smart contract.
+getTotalFeedbacks(): Returns the total number of feedback entries stored on the smart contract.
+getFeedback(uint256 _id): Returns the feedback entry at the specified index.
